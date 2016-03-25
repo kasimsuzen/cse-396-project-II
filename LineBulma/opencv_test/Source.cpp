@@ -49,10 +49,9 @@ int main(int argc, char* argv[]) {
 	VideoCapture capture(arg);
 
 	if (!capture.isOpened()) //if this fails, try to open as a video camera, through the use of an integer param
-	{
+	{	
 		capture.open(atoi(arg.c_str()));
 	}
-
 	double dWidth = capture.get(CV_CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
 	double dHeight = capture.get(CV_CAP_PROP_FRAME_HEIGHT); //get the height of frames of the video
 
@@ -60,10 +59,10 @@ int main(int argc, char* argv[]) {
 
 	Size frameSize(static_cast<int>(dWidth), static_cast<int>(dHeight));
 
-	VideoWriter oVideoWriter("road2.avi", CV_FOURCC('P', 'I', 'M', '1'), 20, frameSize, true); //initialize the VideoWriter object 
+	//VideoWriter oVideoWriter("road3.", CV_FOURCC('M', 'J', 'P', 'G'), 20, frameSize, true); //initialize the VideoWriter object 
 
 	Mat image;
-	image = imread(argv[2]);
+	image = imread("img.jpg");
 	while (1)
 	{
 		capture >> image;
@@ -78,13 +77,13 @@ int main(int argc, char* argv[]) {
 
 		Rect roi(0, image.cols / 3, image.cols - 1, image.rows - image.cols / 3);// set the ROI for the image
 		Mat imgROI = image(roi);
+		//cout << "size of image: "
 		// Display the image
 		if (showSteps){
 			namedWindow("Original Image");
 			imshow("Original Image", imgROI);
 			imwrite("original.bmp", imgROI);
 		}
-
 		// Canny algorithm
 		Mat contours;
 		Canny(imgROI, contours, 50, 250);
@@ -92,11 +91,11 @@ int main(int argc, char* argv[]) {
 		threshold(contours, contoursInv, 128, 255, THRESH_BINARY_INV);
 
 		// Display Canny image
-		if (showSteps){
+	/*	if (showSteps){
 			namedWindow("Contours");
 			imshow("Contours1", contoursInv);
 			imwrite("contours.bmp", contoursInv);
-		}
+		}*/
 
 		/*
 		Hough tranform for line detection with feedback
@@ -132,8 +131,9 @@ int main(int argc, char* argv[]) {
 				// point of intersection of the line with last row
 				Point pt2((rho - result.rows*sin(theta)) / cos(theta), result.rows);
 				// draw a white line
-				line(result, pt1, pt2, Scalar(255), 8);
-				line(hough, pt1, pt2, Scalar(255), 8);
+				line(result, pt1, pt2, Scalar(200), 5);
+				line(hough, pt1, pt2, Scalar(200), 5);
+				
 			}
 
 			//std::cout << "line: (" << rho << "," << theta << ")\n"; 
@@ -180,11 +180,11 @@ int main(int argc, char* argv[]) {
 		Canny(houghPinv, contours, 100, 350);
 		li = ld.findLines(contours);
 		// Display Canny image
-		if (showSteps){
+	/*	if (showSteps){
 			namedWindow("Contours");
 			imshow("Contours2", contours);
 			imwrite("contours.bmp", contoursInv);
-		}
+		}*/
 
 		// Set probabilistic Hough parameters
 		ld.setLineLengthAndGap(5, 2);
@@ -199,8 +199,9 @@ int main(int argc, char* argv[]) {
 		imshow(window_name, image);
 		imwrite("processed.bmp", image);
 
-		oVideoWriter.write(image); //writer the frame into the file
-
+	  //  oVideoWriter.write(image); //writer the frame into the file
+	
+		cout << "To exit: " << (char)waitKey(10)<< endl;
 		char key = (char)waitKey(10);
 		lines.clear();
 	}
