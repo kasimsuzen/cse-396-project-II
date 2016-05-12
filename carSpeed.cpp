@@ -31,7 +31,7 @@ static double drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step,
 		}
 	return totalMagnitude;
 }
-
+/*
 int main(int, char**)
 {
 
@@ -116,4 +116,4 @@ int main(int, char**)
 	return 0;
 }
 
-
+*/
