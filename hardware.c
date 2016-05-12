@@ -76,3 +76,8 @@ void reset(){
 	ledStateChange(0);
 	vibrationStateChange(0);
 }
+
+void delayMS(int ms){
+	delay(ms);
+}
+
