@@ -61,7 +61,7 @@ int main()
 	VideoCapture capture;
 	Mat frame, tempframe, cdst;
 	Mat prevgray, gray, flow, cflow;
-	capture.open("C:/Users/Murat/Desktop/Proje2/AnkaraYolu.avi");
+	capture.open("AnkaraYolu.avi");
 	capture.set(CV_CAP_PROP_POS_MSEC, MINUTE * 60 * 1000);
 	//-- 1. Load the cascades
 	if (!cars_cascade.load(cars_cascade_name)){
