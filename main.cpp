@@ -61,7 +61,7 @@ int main()
 	VideoCapture capture;
 	Mat frame, tempframe, cdst;
 	Mat prevgray, gray, flow, cflow;
-	capture.open("AnkaraYolu.avi");
+	capture.open(0);
 	capture.set(CV_CAP_PROP_POS_MSEC, MINUTE * 60 * 1000);
 	//-- 1. Load the cascades
 	if (!cars_cascade.load(cars_cascade_name)){
@@ -142,12 +142,20 @@ int main()
 				double length = findLineLength(pt1, pt2);
 				if (sou.x < pt1.x && sou.y < pt1.y && saa.x > pt1.x && saa.y > pt1.y && length > 2) {
 
-					if (length < 26)
+					if (length < 26){
+						reset();
 						cout << "Serit Degistiriyor.\n";
+						vibrationStateChange(1);
+						delayMS(250);
+						reset();					
+					}
 					else if (length > 30)
 						cout << "DANGER! Emniyet Seridine Girdi.\n";
-					cout << "Length of Lane : " << length << endl;
-					line(frame, pt1, pt2, Scalar(225, 10, 15), 2, CV_AA);
+						vibrationStateChange(1);
+						//cout << "Length of Lane : " << length << endl;
+						line(frame, pt1, pt2, Scalar(225, 10, 15), 2, CV_AA);
+						delayMS(250);
+						reset();
 				}
 				fitLines.push_back(lines[h]);
 			}
@@ -177,7 +185,7 @@ int main()
 			}
 		}
 
-		cout << intersectLines.size() << endl;
+		//cout << intersectLines.size() << endl;
 #endif
 
 #if 1
@@ -197,14 +205,26 @@ int main()
 
 				if (allFrameTotalMagnitude / i < 20)
 					speedText = "Stop";
-				else if (allFrameTotalMagnitude / i < 50)
+				else if (allFrameTotalMagnitude / i < 50){
+					reset();
 					speedText = "Slow";
-				else if (allFrameTotalMagnitude / i < 100)
+					ledStateChange(1);
+				}
+				else if (allFrameTotalMagnitude / i < 100){
+					reset();
 					speedText = "Medium";
-				else if (allFrameTotalMagnitude / i < 200)
+					ledStateChange(2);
+				}
+				else if (allFrameTotalMagnitude / i < 200){
+					reset();					
 					speedText = "Fast";
-				else
+					ledStateChange(3);
+				}
+				else{
+					reset();
 					speedText = "Very Fast";
+					vibrationStateChange(1);				
+				}
 				if (i % 30 == 0)
 				{
 					i = 0;
