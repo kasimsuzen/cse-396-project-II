@@ -12,24 +12,12 @@ Then opencv 3.1.0 download should be do as (This method is tested other build fl
 
 We use this cmake command (Changing this flags could create some errors or undefined behaviour in our code)
 
-``` cmake -D CMAKE_BUILD_TYPE=RELEASE \
- 	-D CMAKE_INSTALL_PREFIX=/usr/local \
- 	-D INSTALL_C_EXAMPLES=OFF \
- 	-D INSTALL_PYTHON_EXAMPLES=ON \
- 	-D OPENCV_EXTRA_MODULES_PATH=/home/orangepi/opencv_contrib/modules \
- 	-D BUILD_EXAMPLES=ON \
- 	-D PYTHON3_LIBRARY=/usr/lib/arm-linux-gnueabihf/libpython3.4m.so \
- 	-D PYTHON3_PACKAGES_PATH=/usr/lib/python3.4/site-packages/ \
- 	-D PYTHON3_INCLUDE_DIR=/usr/include/python3.4m \
- 	-D PYTHON3_EXECUTABLE=/usr/bin/python3 \
- 	-D BUILD_opencv_python3=ON \
- 	.. && make -j4 && sudo make install && sudo ldconfig
- ```
+``` cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_C_EXAMPLES=OFF 	-D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/home/orangepi/opencv_contrib/modules -D BUILD_EXAMPLES=ON -D PYTHON3_LIBRARY=/usr/lib/arm-linux-gnueabihf/libpython3.4m.so -D PYTHON3_PACKAGES_PATH=/usr/lib/python3.4/site-packages/ -D PYTHON3_INCLUDE_DIR=/usr/include/python3.4m -D PYTHON3_EXECUTABLE=/usr/bin/python3 -D BUILD_opencv_python3=ON .. && make -j4 && sudo make install && sudo ldconfig ```
 
 ## WiringPi install
 To install Wiringpi:
 
-```  git clone https://github.com/zhaolei/WiringOP.git -b h3 && cd WiringOP && chmod +x ./build && sudo ./build && echo /etc/ld.so.conf > /usr/local/lib && sudo ldconfig && cd wiringPi && make static && sudo make install-static ```
+``` git clone https://github.com/zhaolei/WiringOP.git -b h3 && cd WiringOP && chmod +x ./build && sudo ./build && echo /etc/ld.so.conf > /usr/local/lib && sudo ldconfig && cd wiringPi && make static && sudo make install-static ```
 
 ## Building Project
 To make our code you can use Makefile as
