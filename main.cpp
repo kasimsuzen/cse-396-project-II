@@ -21,7 +21,7 @@
 using namespace std;
 using namespace cv;
 
-#define MINUTE 5			// video baslangic dakikasi (1, 4, 9, 14, 15, 16, 16.9, 17, 18, 19 serit degistirme for Yol01.avi) (10, 17.5 Serit degistirme ;; 21 emniyet seridi AnkaraYolu)
+#define MINUTE 0			// video baslangic dakikasi (1, 4, 9, 14, 15, 16, 16.9, 17, 18, 19 serit degistirme for Yol01.avi) (10, 17.5 Serit degistirme ;; 21 emniyet seridi AnkaraYolu)
 #define MIN_LINE_LENGTH 20  // canny icin min line uzunlugu
 #define MAX_LINE_GAP 5      // canny icin max gap size
 #define THRESHOLD_VALUE 100 // FOR LINE
@@ -53,6 +53,7 @@ static double drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step, double, c
 void findSigns(Mat& image, vector<Rect> &rects);
 string detectCars(Mat& frame1, vector<Point>& elipses, vector<Rect>& cars);
 string intToString(int number);
+bool detectOverbridge(Mat& frame);
 
 int main()
 {
@@ -61,7 +62,7 @@ int main()
 	VideoCapture capture;
 	Mat frame, tempframe, cdst;
 	Mat prevgray, gray, flow, cflow;
-	capture.open(0);
+	capture.open("C:/Users/Murat/Desktop/Proje2/AnkaraYolu.avi");
 	capture.set(CV_CAP_PROP_POS_MSEC, MINUTE * 60 * 1000);
 	//-- 1. Load the cascades
 	if (!cars_cascade.load(cars_cascade_name)){
@@ -79,13 +80,16 @@ int main()
 	vector<Rect> rects;
 	vector<Point> elips;
 	vector<Rect> cars;
+	bool bridge;
 	string detectCarsResult;
 	Mat roi;
 	Mat roi2;
 	for (int i = 0; true; i++)
 	{
 		capture >> frame;
+		if (i % 2 != 0) continue;
 		findSigns(frame, rects);
+		bridge = detectOverbridge(frame);
 		//if(i % 3 != 0) continue;
 		//resize(frame, frame, Size(frame.cols / 2, frame.rows / 2));
 		resize(frame, frame, Size(RESIZE_WIDTH, RESIZE_HEIGHT));
@@ -143,19 +147,19 @@ int main()
 				if (sou.x < pt1.x && sou.y < pt1.y && saa.x > pt1.x && saa.y > pt1.y && length > 2) {
 
 					if (length < 26){
-						reset();
+						//reset();
 						cout << "Serit Degistiriyor.\n";
-						vibrationStateChange(1);
-						delayMS(250);
-						reset();					
+//						vibrationStateChange(1);
+//						delayMS(250);
+//						reset();					
 					}
 					else if (length > 30)
 						cout << "DANGER! Emniyet Seridine Girdi.\n";
-						vibrationStateChange(1);
+//						vibrationStateChange(1);
 						//cout << "Length of Lane : " << length << endl;
 						line(frame, pt1, pt2, Scalar(225, 10, 15), 2, CV_AA);
-						delayMS(250);
-						reset();
+						//delayMS(250);
+						//reset();
 				}
 				fitLines.push_back(lines[h]);
 			}
@@ -206,24 +210,24 @@ int main()
 				if (allFrameTotalMagnitude / i < 20)
 					speedText = "Stop";
 				else if (allFrameTotalMagnitude / i < 50){
-					reset();
+					//reset();
 					speedText = "Slow";
-					ledStateChange(1);
+					//ledStateChange(1);
 				}
 				else if (allFrameTotalMagnitude / i < 100){
-					reset();
+					//reset();
 					speedText = "Medium";
-					ledStateChange(2);
+					//ledStateChange(2);
 				}
 				else if (allFrameTotalMagnitude / i < 200){
-					reset();					
+					//reset();					
 					speedText = "Fast";
-					ledStateChange(3);
+					//ledStateChange(3);
 				}
 				else{
-					reset();
+					//reset();
 					speedText = "Very Fast";
-					vibrationStateChange(1);				
+					//vibrationStateChange(1);				
 				}
 				if (i % 30 == 0)
 				{
@@ -251,10 +255,15 @@ int main()
 
 		// araba yakalamak icin
 		putText(frame, detectCarsResult, cv::Point(0, 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 0), 1);
-			for (size_t y = 0; y < cars.size(); y++)
-			{
-				ellipse(frame, elips[y], Size(cars[y].width / 2, cars[y].height / 2), 0, 0, 360, Scalar(255, 0, 255), 2, 8, 0);
-			}
+		for (size_t y = 0; y < cars.size(); y++)
+		{
+			ellipse(frame, elips[y], Size(cars[y].width / 2, cars[y].height / 2), 0, 0, 360, Scalar(255, 0, 255), 2, 8, 0);
+		}
+
+		//kopru icin
+		string brdg = bridge ? "VAR" : "YOK";
+		putText(frame, "Over Bridge: " + brdg, cv::Point(0, 45), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(0, 100, 210), 1);
+
 		imshow("original", frame);
 		rects.clear();
 //		imshow("roi", roi);
@@ -418,7 +427,7 @@ string detectCars(Mat& frame1, vector<Point>& elipses, vector<Rect>& cars)
 	/*Put text on screen*/
 	//putText(frame, screen, cv::Point(0, 15), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, Scalar(255, 255, 0), 1);
 	//waitKey(30);
-	printf("\tTotal vehicles on screen: %d\n", carSize);
+	//printf("\tTotal vehicles on screen: %d\n", carSize);
 	//memset(screen, '\0', strlen(screen));
 	return screen;
 }
@@ -428,4 +437,22 @@ string intToString(int number){
 	std::stringstream ss;
 	ss << number;
 	return ss.str();
+}
+
+bool detectOverbridge(Mat& frame)
+{
+	Mat gray, thresholded;
+	cvtColor(frame, gray, CV_RGB2GRAY);
+
+	threshold(gray, thresholded, 60, 255, CV_THRESH_BINARY);
+	int total = thresholded.rows * thresholded.cols;
+
+	int zeros = total - countNonZero(thresholded);
+
+
+	gray.release();
+	thresholded.release();
+
+	if (zeros > (total - zeros)) return true;
+	else						 return false;
 }
