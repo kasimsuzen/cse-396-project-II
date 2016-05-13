@@ -1,0 +1,6 @@
+{
+  "name": "Trafik Uyarı Sistemi",
+  "tagline": "",
+  "body": "This repository is for CSE396 course of Gebze Technical University Computer engineering Faculty.\r\n\r\n## Project Description\r\nWe created a traffic/road assistant system. Which will recognize road lines, emergency lines, traffic density, speed detection, traffic sign recognition and if the vehicle goes under bridge or driving in a tunnel.\r\n\r\n## Project Modules\r\nOur project has two modules as hardware and image processing software using different methods such as:\r\n1. Machine Learning in Traffic sign and vehicle recognition\r\n2. Haar cascade in vehicle detection\r\n3. Optic flow in speed detection\r\n4. Color modifying and thresholding in tunnel drive\r\n5. Houghline, canny edge detection algorithm and angle calculation for line detection\r\n\r\n## Who We Are\r\n1. Elif YERLİ\r\n2. Emrah YILDIRIM\r\n3. Ercan UCA\r\n4. Nagihan İNAN\r\n5. Merve ŞAHİN\r\n6. Murat ALTUNTAŞ\r\n7. Kasım SÜZEN\r\n8. Osman AKBACI\r\n\r\n## Example video\r\n[![Indoor Example Usage Video](http://img.youtube.com/vi/eiVtSzA_flU/0.jpg)](https://www.youtube.com/watch?v=eiVtSzA_flU)",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
