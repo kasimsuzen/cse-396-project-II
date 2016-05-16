@@ -21,7 +21,7 @@
 using namespace std;
 using namespace cv;
 
-#define MINUTE 0			// video baslangic dakikasi (1, 4, 9, 14, 15, 16, 16.9, 17, 18, 19 serit degistirme for Yol01.avi) (10, 17.5 Serit degistirme ;; 21 emniyet seridi AnkaraYolu)
+#define MINUTE 2.3			// video baslangic dakikasi (1, 4, 9, 14, 15, 16, 16.9, 17, 18, 19 serit degistirme for Yol01.avi) (10, 17.5 Serit degistirme ;; 21 emniyet seridi AnkaraYolu)
 #define MIN_LINE_LENGTH 20  // canny icin min line uzunlugu
 #define MAX_LINE_GAP 5      // canny icin max gap size
 #define THRESHOLD_VALUE 100 // FOR LINE
@@ -57,13 +57,13 @@ bool detectOverbridge(Mat& frame);
 
 int main()
 {
-	//hardwareSetup();   // main de 1 defa cagirilir
-	//reset();
+	hardwareSetup();   // main de 1 defa cagirilir
+	reset();
 	VideoCapture capture;
 	Mat frame, tempframe, cdst;
 	Mat prevgray, gray, flow, cflow;
-	capture.open("C:/Users/Murat/Desktop/Proje2/AnkaraYolu.avi");
-	capture.set(CV_CAP_PROP_POS_MSEC, MINUTE * 60 * 1000);
+	capture.open(0);
+	//capture.set(CV_CAP_PROP_POS_MSEC, MINUTE * 60 * 1000);
 	//-- 1. Load the cascades
 	if (!cars_cascade.load(cars_cascade_name)){
 		printf("--(!)Error loading face cascade\n");
@@ -147,19 +147,19 @@ int main()
 				if (sou.x < pt1.x && sou.y < pt1.y && saa.x > pt1.x && saa.y > pt1.y && length > 2) {
 
 					if (length < 26){
-						//reset();
+						reset();
 						cout << "Serit Degistiriyor.\n";
-//						vibrationStateChange(1);
-//						delayMS(250);
-//						reset();					
+						vibrationStateChange(1);
+						delayMS(250);
+						reset();					
 					}
 					else if (length > 30)
 						cout << "DANGER! Emniyet Seridine Girdi.\n";
-//						vibrationStateChange(1);
+						vibrationStateChange(1);
 						//cout << "Length of Lane : " << length << endl;
 						line(frame, pt1, pt2, Scalar(225, 10, 15), 2, CV_AA);
-						//delayMS(250);
-						//reset();
+						delayMS(250);
+						reset();
 				}
 				fitLines.push_back(lines[h]);
 			}
@@ -210,24 +210,24 @@ int main()
 				if (allFrameTotalMagnitude / i < 20)
 					speedText = "Stop";
 				else if (allFrameTotalMagnitude / i < 50){
-					//reset();
+					reset();
 					speedText = "Slow";
-					//ledStateChange(1);
+					ledStateChange(1);
 				}
 				else if (allFrameTotalMagnitude / i < 100){
-					//reset();
+					reset();
 					speedText = "Medium";
-					//ledStateChange(2);
+					ledStateChange(2);
 				}
 				else if (allFrameTotalMagnitude / i < 200){
-					//reset();					
+					reset();					
 					speedText = "Fast";
-					//ledStateChange(3);
+					ledStateChange(3);
 				}
 				else{
-					//reset();
+					reset();
 					speedText = "Very Fast";
-					//vibrationStateChange(1);				
+					vibrationStateChange(1);				
 				}
 				if (i % 30 == 0)
 				{
